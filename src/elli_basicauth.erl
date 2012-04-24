@@ -14,8 +14,7 @@ handle(Req, Config) ->
     case apply(auth_fun(Config), [Req, User, Password]) of
         unauthorized ->
             throw({401,
-                   [{<<"WWW-Authenticate">>,
-                     <<"Basic realm=\"Secure Area\"">>}],
+                   [{<<"WWW-Authenticate">>, auth_realm(Config)}],
                    <<"Unauthorized">>});
 
         forbidden ->
@@ -40,6 +39,11 @@ auth_fun(Config) ->
         fun (_Req, _User, _Password) ->
             forbidden
         end).
+
+
+auth_realm(Config) ->
+    Realm = proplists:get_value(auth_realm, Config, <<"Secure Area">>),
+    iolist_to_binary([<<"Basic realm=\"">>, Realm, <<"\"">>]).
 
 
 credentials(Req) ->

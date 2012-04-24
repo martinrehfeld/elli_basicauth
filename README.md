@@ -19,7 +19,9 @@ Use it like this:
                 end
         end,
 
-    BasicauthConfig = [{auth_fun, AuthFun}],
+    BasicauthConfig = [{auth_fun, AuthFun},
+                       {auth_realm, <<"Admin Area">>} % optional
+                      ],
 
     Config = [
               {mods, [

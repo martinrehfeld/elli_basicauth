@@ -11,8 +11,8 @@
 %%
 
 no_credentials_test() ->
-    meck:new(elli),
-    meck:expect(elli, get_header,
+    meck:new(elli_request),
+    meck:expect(elli_request, get_header,
         fun (<<"Authorization">>, mock_request) ->
             undefined
         end),
@@ -24,13 +24,13 @@ no_credentials_test() ->
                   [{<<"WWW-Authenticate">>,
                     <<"Basic realm=\"Secure Area\"">>}],
                   <<"Unauthorized">>}, Result),
-    ?assert(meck:validate(elli)),
-    meck:unload(elli).
+    ?assert(meck:validate(elli_request)),
+    meck:unload(elli_request).
 
 
 valid_credentials_test() ->
-    meck:new(elli),
-    meck:expect(elli, get_header,
+    meck:new(elli_request),
+    meck:expect(elli_request, get_header,
         fun (<<"Authorization">>, mock_request) ->
             ?VALID_CREDENTIALS
         end),
@@ -39,13 +39,13 @@ valid_credentials_test() ->
                                    basicauth_config()),
 
     ?assertEqual(ignore, Result),
-    ?assert(meck:validate(elli)),
-    meck:unload(elli).
+    ?assert(meck:validate(elli_request)),
+    meck:unload(elli_request).
 
 
 invalid_credentials_test() ->
-    meck:new(elli),
-    meck:expect(elli, get_header,
+    meck:new(elli_request),
+    meck:expect(elli_request, get_header,
         fun (<<"Authorization">>, mock_request) ->
             ?INVALID_CREDENTIALS
         end),
@@ -54,8 +54,8 @@ invalid_credentials_test() ->
                                           basicauth_config())),
 
     ?assertEqual({403, [], <<"Forbidden">>}, Result),
-    ?assert(meck:validate(elli)),
-    meck:unload(elli).
+    ?assert(meck:validate(elli_request)),
+    meck:unload(elli_request).
 
 
 %%
@@ -63,9 +63,9 @@ invalid_credentials_test() ->
 %%
 
 basicauth_config() ->
-    [{auth_fun, fun test_predicate/3}].
+    [{auth_fun, fun auth_fun/3}].
 
 
-test_predicate(_Req, undefined, undefined) -> unauthorized;
-test_predicate(_Req, ?USER, ?PASSWORD) -> ok;
-test_predicate(_Req, _User, _Password) -> forbidden.
+auth_fun(_Req, undefined, undefined) -> unauthorized;
+auth_fun(_Req, ?USER, ?PASSWORD) -> ok;
+auth_fun(_Req, _User, _Password) -> forbidden.

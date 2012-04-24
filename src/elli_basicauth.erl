@@ -75,7 +75,7 @@ credentials(Req) ->
 
 
 authorization_header(Req) ->
-    elli:get_header(<<"Authorization">>, Req).
+    elli_request:get_header(<<"Authorization">>, Req).
 
 
 credentials_from_header(AuthorizationHeader) ->

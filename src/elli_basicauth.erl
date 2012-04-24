@@ -26,29 +26,7 @@ handle(Req, Config) ->
     end.
 
 
-handle_event(request_complete, [_Req, _ResponseCode, _ResponseHeaders,
-                                _ResponseBody, _Timings], _Config) ->
-    ok;
-
-handle_event(request_throw, _, _Config) ->
-    ok;
-
-handle_event(request_exit, _, _Config) ->
-    ok;
-
-handle_event(request_error, _, _Config) ->
-    ok;
-
-handle_event(request_parse_error, [_Data], _Args) ->
-    ok;
-
-handle_event(client_closed, [_When], _Config) ->
-    ok;
-
-handle_event(client_timeout, [_When], _Config) ->
-    ok;
-
-handle_event(elli_startup, [], _Config) ->
+handle_event(_, _, _) ->
     ok.
 
 

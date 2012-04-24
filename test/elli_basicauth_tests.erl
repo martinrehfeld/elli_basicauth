@@ -58,6 +58,36 @@ invalid_credentials_test() ->
     meck:unload(elli_request).
 
 
+elli_handler_behaviour_test() ->
+    ?assertEqual(ok, elli_basicauth:handle_event(request_complete,
+                         [mock_request,
+                          mock_response_code,
+                          mock_response_headers,
+                          mock_response_body,
+                          mock_timings], mock_config)),
+
+    ?assertEqual(ok, elli_basicauth:handle_event(request_throw,
+                         mock_dummy, mock_config)),
+
+    ?assertEqual(ok, elli_basicauth:handle_event(request_exit,
+                         mock_dummy, mock_config)),
+
+    ?assertEqual(ok, elli_basicauth:handle_event(request_error,
+                         mock_dummy, mock_config)),
+
+    ?assertEqual(ok, elli_basicauth:handle_event(request_parse_error,
+                         [mock_data], mock_config)),
+
+    ?assertEqual(ok, elli_basicauth:handle_event(client_closed,
+                         [mock_when], mock_config)),
+
+    ?assertEqual(ok, elli_basicauth:handle_event(client_timeout,
+                         [mock_when], mock_config)),
+
+    ?assertEqual(ok, elli_basicauth:handle_event(elli_startup,
+                         [], mock_config)).
+
+
 %%
 %% HELPERS
 %%

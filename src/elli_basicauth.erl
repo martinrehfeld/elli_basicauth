@@ -20,6 +20,9 @@ handle(Req, Config) ->
         forbidden ->
             throw({403, [], <<"Forbidden">>});
 
+        hidden ->
+            throw({404, [], <<>>});
+
         _ ->
             ignore
     end.

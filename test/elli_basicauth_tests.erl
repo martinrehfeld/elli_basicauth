@@ -77,6 +77,21 @@ invalid_credentials_test() ->
     meck:unload(elli_request).
 
 
+hidden_auth_test() ->
+    meck:new(elli_request),
+    meck:expect(elli_request, get_header,
+        fun (<<"Authorization">>, mock_request) ->
+            ?INVALID_CREDENTIALS
+        end),
+
+    Result = (catch elli_basicauth:handle(mock_request,
+                                          hidden_basicauth_config())),
+
+    ?assertEqual({404, [], <<>>}, Result),
+    ?assert(meck:validate(elli_request)),
+    meck:unload(elli_request).
+
+
 elli_handler_behaviour_test() ->
     ?assertEqual(ok, elli_basicauth:handle_event(request_complete,
                          [mock_request,
@@ -114,6 +129,8 @@ elli_handler_behaviour_test() ->
 basicauth_config() ->
     [{auth_fun, fun auth_fun/3}].
 
+hidden_basicauth_config() ->
+    [{auth_fun, fun hidden_auth_fun/3}].
 
 basicauth_config_with_custom_realm() ->
     [{auth_fun, fun auth_fun/3},
@@ -123,3 +140,7 @@ basicauth_config_with_custom_realm() ->
 auth_fun(_Req, undefined, undefined) -> unauthorized;
 auth_fun(_Req, ?USER, ?PASSWORD) -> ok;
 auth_fun(_Req, _User, _Password) -> forbidden.
+
+hidden_auth_fun(_Req, undefined, undefined) -> hidden;
+hidden_auth_fun(_Req, ?USER, ?PASSWORD) -> ok;
+hidden_auth_fun(_Req, _User, _Password) -> hidden.
